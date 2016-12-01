@@ -24,6 +24,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
+import rx.Observable;
 
 /**
  * Created by lianyuchen on 16/9/5.
@@ -38,7 +39,7 @@ public interface WeatherService {
      * @return
      */
     @Headers("apikey:c114a4557cde9bb59dedd52e27707d33")
-    @GET("api")
+    @GET("weatherservice/citylist")
     Call<CityListBean> listCity(@Query("cityname") String cityname);
     /**
      * 这是第二种写法，将header从参数中传入
@@ -135,5 +136,13 @@ public interface WeatherService {
      */
     @GET
     Call<ResponseBody> downloadFile(@Url String url);
+
+    /**
+     * 使用rxjava 进行网路请求,简化代码
+     * @param url
+     * @return
+     */
+    @GET
+    Observable<ResponseBody> download(@Url String url);
 
 }

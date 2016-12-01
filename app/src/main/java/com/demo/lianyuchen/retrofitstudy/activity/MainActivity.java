@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.demo.lianyuchen.retrofitstudy.R;
 import com.demo.lianyuchen.retrofitstudy.constants.AppApi;
+import com.demo.lianyuchen.retrofitstudy.helper.RetrofitHelper;
 import com.demo.lianyuchen.retrofitstudy.model.BaseBean;
 import com.demo.lianyuchen.retrofitstudy.model.CityInfo;
 import com.demo.lianyuchen.retrofitstudy.model.CityListBean;
@@ -48,6 +49,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -207,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.button05:
-                Call<ResponseBody> bigFileCall = mockyService.downloadFile(AppApi.LOCAL_SERVER_BASE_URL + "user/HuoYunAppForMaster_release__v4.3_58585858.apk");
+                Call<ResponseBody> bigFileCall = mockyService.downloadFile(AppApi.LOCAL_SERVER_BASE_URL + "user/photo/55.rar");
                 bigFileCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -233,8 +238,50 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent06, OK_HTTP_REQUEST);
                 break;
             case R.id.button07:
+
+                WeatherService weatherService = RetrofitHelper.createApi(WeatherService.class);
+                Call<ResponseBody> responseBodyCall = weatherService.downloadFile(AppApi.LOCAL_SERVER_BASE_URL + "user/photo/IMG_20160908_145410.jpg");
+                responseBodyCall.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            ResponseBody body = response.body();
+                            if (null != body) {
+                                Log.i(TAG, "is download success ?"+ saveFile(body)) ;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
                 break;
             case R.id.button08:
+                RetrofitHelper.createApi(WeatherService.class)
+                        .download(AppApi.LOCAL_SERVER_BASE_URL + "user/photo/IMG_20160908_145410.jpg")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<ResponseBody>() {
+                            @Override
+                            public void onCompleted() {
+                                Log.i(TAG,"onCompleted");
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.i(TAG,"onError");
+                            }
+
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+                                Log.i(TAG,"onNext");
+                                if (null != responseBody) {
+                                    Log.i(TAG, "is download success ?"+ saveFile(responseBody)) ;
+                                }
+                            }
+                        });
                 break;
             case R.id.button09:
                 break;

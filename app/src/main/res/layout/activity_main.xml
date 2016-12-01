@@ -52,13 +52,15 @@
 
         <Button
             android:id="@+id/button07"
+            android:text="使用封装的Retrofit进行请求"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/button08"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="举个rxjava简化代码的栗子"/>
 
         <Button
             android:id="@+id/button09"
