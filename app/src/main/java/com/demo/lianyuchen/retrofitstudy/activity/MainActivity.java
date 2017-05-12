@@ -25,8 +25,6 @@ import com.demo.lianyuchen.retrofitstudy.model.CityListBean;
 import com.demo.lianyuchen.retrofitstudy.service.WeatherService;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +36,10 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -49,10 +51,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -263,23 +261,28 @@ public class MainActivity extends AppCompatActivity {
                         .download(AppApi.LOCAL_SERVER_BASE_URL + "user/photo/IMG_20160908_145410.jpg")
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<ResponseBody>() {
+                        .subscribe(new io.reactivex.Observer<ResponseBody>() {
                             @Override
-                            public void onCompleted() {
-                                Log.i(TAG,"onCompleted");
+                            public void onSubscribe(@NonNull Disposable d) {
+
                             }
 
                             @Override
-                            public void onError(Throwable e) {
-                                Log.i(TAG,"onError");
-                            }
-
-                            @Override
-                            public void onNext(ResponseBody responseBody) {
+                            public void onNext(@NonNull ResponseBody responseBody) {
                                 Log.i(TAG,"onNext");
                                 if (null != responseBody) {
                                     Log.i(TAG, "is download success ?"+ saveFile(responseBody)) ;
                                 }
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                Log.i(TAG,"onError");
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.i(TAG,"onCompleted");
                             }
                         });
                 break;
